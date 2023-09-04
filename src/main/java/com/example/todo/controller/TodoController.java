@@ -7,6 +7,7 @@ import com.example.todo.service.TodoService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("todo")
+@Log4j2
 public class TodoController {
 
   @Autowired
@@ -69,6 +71,8 @@ public class TodoController {
 
   @GetMapping
   public ResponseEntity<?> retrieveTodoList() {
+
+    log.info("----------Get-------------------");
 
     String temporaryUserId = "temporary-user";
 
