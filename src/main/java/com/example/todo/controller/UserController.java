@@ -8,6 +8,8 @@ import com.example.todo.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,8 @@ public class UserController {
   @Autowired
   private TokenProvider tokenProvider;
 
+  private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
   @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
     try {
@@ -30,7 +34,7 @@ public class UserController {
         throw new RuntimeException("Invalid Password value");
       }
       UserEntity user = UserEntity.builder().username(userDTO.getUsername())
-          .password(userDTO.getPassword()).build();
+          .password(passwordEncoder.encode(userDTO.getPassword())).build();   // Encode
 
       UserEntity registeredUser = userService.create(user);
       UserDTO responseUserDTO = UserDTO.builder().id(registeredUser.getId())
@@ -47,7 +51,7 @@ public class UserController {
   @PostMapping("/signin")
   public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
 
-    UserEntity user = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword());
+    UserEntity user = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
     if (user != null) {
       //token 생성
       final String token = tokenProvider.create(user);

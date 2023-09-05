@@ -4,6 +4,7 @@ import com.example.todo.model.UserEntity;
 import com.example.todo.persistence.UserRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,7 +28,13 @@ public class UserService {
     return userRepository.save(userEntity);
   }
 
-  public UserEntity getByCredentials(final String username, final String password) {
-    return userRepository.findByUsernameAndPassword(username, password);
+  public UserEntity getByCredentials(final String username, final String password, final
+      PasswordEncoder encoder) {
+    final UserEntity originalUser = userRepository.findByUsername(username);
+
+    if (originalUser != null && encoder.matches(password, originalUser.getPassword())) {
+      return originalUser;
+    }
+    return null;
   }
 }
