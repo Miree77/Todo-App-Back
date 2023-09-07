@@ -36,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .oauth2Login()
         .redirectionEndpoint()
-        .baseUri("/login/**");
+        .baseUri("/oauth2/**");
 
     http.addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
   }
