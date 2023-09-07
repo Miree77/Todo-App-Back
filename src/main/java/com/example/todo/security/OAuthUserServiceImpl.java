@@ -49,7 +49,7 @@ public class OAuthUserServiceImpl extends DefaultOAuth2UserService {
 
     log.info("-----------username {} authProvider {} ", username, authProvider);
 
-    return oAuth2User;
-
+    //return oAuth2User;
+    return new ApplicationOAuth2User(userEntity.getId(), oAuth2User.getAttributes());
   }
 }

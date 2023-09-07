@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +27,19 @@ public class TokenProvider {
         .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
         .setSubject(userEntity.getId())
         .setIssuer("todo App")
+        .setIssuedAt(new Date())
+        .setExpiration(expiryDate)
+        .compact();
+  }
+
+  public String create(final Authentication authentication) {
+    ApplicationOAuth2User userPrincipal = (ApplicationOAuth2User) authentication.getPrincipal();
+    // 기한은 1일
+    Date expiryDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
+
+    return Jwts.builder()
+        .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+        .setSubject(userPrincipal.getName())
         .setIssuedAt(new Date())
         .setExpiration(expiryDate)
         .compact();
