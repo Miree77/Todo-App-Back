@@ -1,6 +1,7 @@
 package com.example.todo.config;
 
 import com.example.todo.security.JwtAuthenticationFilter;
+import com.example.todo.security.OAuthUserServiceImpl;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
   private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+  @Autowired
+  private OAuthUserServiceImpl oAuthUserService;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -36,7 +40,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .oauth2Login()
         .redirectionEndpoint()
-        .baseUri("/oauth2/**");
+        .baseUri("/oauth2/**")
+        .and()
+        .userInfoEndpoint()
+        .userService(oAuthUserService);   // OAuthUserServiceImpl 을 유저서비스로 등록
 
     http.addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
   }
