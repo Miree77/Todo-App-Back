@@ -45,6 +45,8 @@ public class OAuthUserServiceImpl extends DefaultOAuth2UserService {
     if (!userRepository.existsByUsername(username)) {
       userEntity = UserEntity.builder().username(username).authPrivider(authProvider).build();
       userEntity = userRepository.save(userEntity);
+    }else {
+      userEntity = userRepository.findByUsername(username);
     }
 
     log.info("-----------username {} authProvider {} ", username, authProvider);
